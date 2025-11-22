@@ -9,12 +9,12 @@ import {
   TextInput,
   RefreshControl,
   StatusBar,
-   ImageBackground,
-
+  ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/types';
 import { useSearchTeamsQuery } from '../../api/sportsApi';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logout, selectCurrentUser } from '../auth/authSlice';
@@ -23,6 +23,7 @@ import { deleteToken } from '../../utils/storage';
 import MatchCard from './MatchCard';
 
 export default function HomeScreen() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
   const favouriteTeams = useAppSelector(selectFavouriteTeams);
@@ -39,6 +40,10 @@ export default function HomeScreen() {
     if (tempQuery.trim()) {
       setSearchQuery(tempQuery.trim());
     }
+  };
+
+  const handleTeamPress = (team: any) => {
+    navigation.navigate('TeamDetail', { team });
   };
 
   if (isLoading && !teams) {
@@ -121,7 +126,12 @@ export default function HomeScreen() {
       <FlatList
         data={teams || []}
         keyExtractor={(item) => item.idTeam}
-        renderItem={({ item }) => <MatchCard team={item} />}
+        renderItem={({ item }) => (
+          <MatchCard 
+            team={item} 
+            onPress={() => handleTeamPress(item)}
+          />
+        )}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <View style={styles.listHeader}>
@@ -193,7 +203,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(30, 7, 32, 0.7)', // Dark navy/black 
+    backgroundColor: 'rgba(30, 7, 32, 0.7)',
   },
   safeHeader: {
     paddingHorizontal: 20,
