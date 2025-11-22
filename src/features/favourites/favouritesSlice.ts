@@ -5,12 +5,14 @@ interface FavouritesState {
   teamIds: string[];
   eventIds: string[];
   playerIds: string[];
+  isLoaded: boolean;
 }
 
 const initialState: FavouritesState = {
   teamIds: [],
   eventIds: [],
   playerIds: [],
+  isLoaded: false,
 };
 
 const favouritesSlice = createSlice({
@@ -55,6 +57,15 @@ const favouritesSlice = createSlice({
     clearPlayerFavourites: (state) => {
       state.playerIds = [];
     },
+    // NEW: Load favourites from storage
+    loadFavouritesFromStorage: (state, action: PayloadAction<FavouritesState | null>) => {
+      if (action.payload) {
+        state.teamIds = action.payload.teamIds || [];
+        state.eventIds = action.payload.eventIds || [];
+        state.playerIds = action.payload.playerIds || [];
+      }
+      state.isLoaded = true;
+    },
   },
 });
 
@@ -66,10 +77,12 @@ export const {
   clearTeamFavourites,
   clearEventFavourites,
   clearPlayerFavourites,
+  loadFavouritesFromStorage,
 } = favouritesSlice.actions;
 
 export const selectFavouriteTeams = (state: RootState) => state.favourites.teamIds;
 export const selectFavouriteEvents = (state: RootState) => state.favourites.eventIds;
 export const selectFavouritePlayers = (state: RootState) => state.favourites.playerIds;
+export const selectFavouritesLoaded = (state: RootState) => state.favourites.isLoaded;
 
 export default favouritesSlice.reducer;

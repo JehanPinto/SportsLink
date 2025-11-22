@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useLoginMutation } from '../../api/authApi';
 import { useAppDispatch } from '../../hooks';
 import { setCredentials } from './authSlice';
-import { saveToken } from '../../utils/storage';
 
 const loginSchema = yup.object().shape({
   username: yup
@@ -37,7 +36,6 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [login, { isLoading }] = useLoginMutation();
-  const [useMock, setUseMock] = useState(false);
 
   const {
     control,
@@ -57,42 +55,14 @@ export default function LoginScreen() {
     setValue('password', 'emilyspass');
   };
 
-    const onSubmit = async (data: LoginFormData) => {
-    // If mock mode, skip API call
-    if (useMock) {
-      const mockUser = {
-        id: 1,
-        username: data.username,
-        email: `${data.username}@example.com`,
-        firstName: 'Mock',
-        lastName: 'User',
-        image: 'https://via.placeholder.com/150',
-      };
-      const mockToken = `mock_token_${Date.now()}`;
-      
-      try {
-        await saveToken('auth_token', mockToken);
-        
-        dispatch(
-          setCredentials({
-            user: mockUser,
-            token: mockToken,
-          })
-        );
-      } catch (error) {
-        console.error('Mock login error:', error);
-        Alert.alert('Error', 'Failed to save login credentials');
-      }
-      return;
-    }
-
+  const onSubmit = async (data: LoginFormData) => {
     try {
       console.log('Attempting login with:', data);
       const result = await login(data).unwrap();
       
       console.log('Login successful:', result);
-      await saveToken('auth_token', result.accessToken);
       
+      // Dispatch to Redux (middleware will save to AsyncStorage automatically)
       dispatch(
         setCredentials({
           user: {
@@ -101,6 +71,7 @@ export default function LoginScreen() {
             email: result.email,
             firstName: result.firstName,
             lastName: result.lastName,
+            gender: result.gender,
             image: result.image,
           },
           token: result.accessToken,
@@ -111,20 +82,7 @@ export default function LoginScreen() {
       
       Alert.alert(
         'Login Failed',
-        error?.data?.message || 'Invalid credentials. Try "emilys" / "emilyspass" or use Mock Login.',
-        [
-          {
-            text: 'Use Mock Login',
-            onPress: () => {
-              setUseMock(true);
-              handleSubmit(onSubmit)();
-            },
-          },
-          {
-            text: 'OK',
-            style: 'cancel',
-          },
-        ]
+        error?.data?.message || 'Invalid credentials. Please try again.',
       );
     }
   };
@@ -184,9 +142,7 @@ export default function LoginScreen() {
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>
-              {useMock ? 'Login (Mock)' : 'Login'}
-            </Text>
+            <Text style={styles.buttonText}>Login</Text>
           )}
         </TouchableOpacity>
 
