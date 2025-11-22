@@ -7,6 +7,9 @@ import RegisterScreen from '../features/auth/RegisterScreen';
 import TabNavigator from './TabNavigator';
 import TeamDetailScreen from '../features/team/teamDetailScreen';
 import { RootStackParamList } from './types';
+import MatchDetailsScreen from '../features/matches/MatchDetailsScreen';
+import PlayerDetailsScreen from '../features/players/PlayerDetailsScreen.tsx';
+import TeamSquadScreen from '../features/team/TeamSquadScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,6 +27,9 @@ export default function RootNavigator() {
         <>
           <Stack.Screen name="Home" component={TabNavigator} />
           <Stack.Screen name="TeamDetail" component={TeamDetailScreen} />
+          <Stack.Screen name="MatchDetails" component={MatchDetailsScreen} /> 
+          <Stack.Screen name="PlayerDetails" component={PlayerDetailsScreen} />
+          <Stack.Screen name="TeamSquad" component={TeamSquadScreen} /> 
         </>
       )}
     </Stack.Navigator>

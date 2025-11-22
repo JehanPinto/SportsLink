@@ -4,4 +4,7 @@ export type RootStackParamList = {
   Register: undefined;
   Home: undefined;
   TeamDetail: { team: any }; // or { idTeam: string } if you prefer
+  MatchDetails: { eventId: string }; // NEW: Add this
+  PlayerDetails: { playerId: string }; // For future use
+  TeamSquad: { teamName: string };
 };
