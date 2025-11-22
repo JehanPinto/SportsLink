@@ -6,6 +6,7 @@ import HomeScreen from '../features/home/HomeScreen';
 import FavouritesScreen from '../features/favourites/FavouritesScreen';
 import { useAppSelector } from '../hooks';
 import { selectFavouriteTeams } from '../features/favourites/favouritesSlice';
+import ProfileScreen from '../features/profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -56,6 +57,16 @@ export default function TabNavigator() {
           },
           tabBarIcon: ({ color, size }) => (
             <Feather name="heart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="user" size={size} color={color} />
           ),
         }}
       />

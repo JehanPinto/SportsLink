@@ -1,6 +1,8 @@
 import { Feather } from "@expo/vector-icons";
 import { RouteProp, useNavigation, useRoute, NavigationProp } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
+import { useTheme } from '../../contexts/ThemeContext';
+
 import {
   ActivityIndicator,
   RefreshControl,

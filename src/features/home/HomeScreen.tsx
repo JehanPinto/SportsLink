@@ -21,6 +21,7 @@ import { logout, selectCurrentUser } from '../auth/authSlice';
 import { selectFavouriteTeams } from '../favourites/favouritesSlice';
 import { deleteToken } from '../../utils/storage';
 import MatchCard from './MatchCard';
+import { useTheme } from '../../context/ThemeContext';
 
 const DEFAULT_LEAGUE = 'English Premier League';
 
@@ -29,6 +30,7 @@ export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
   const favouriteTeams = useAppSelector(selectFavouriteTeams);
+  const { theme, isDark } = useTheme();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [tempQuery, setTempQuery] = useState('');
@@ -46,7 +48,7 @@ export default function HomeScreen() {
     isLoading: isLoadingSearch, 
     error: searchError 
   } = useSearchTeamsQuery(searchQuery, {
-    skip: !searchQuery, // Don't fetch if searchQuery is empty
+    skip: !searchQuery,
   });
 
   // Determine which data to show
@@ -76,8 +78,6 @@ export default function HomeScreen() {
 
   const handleRefresh = () => {
     if (searchQuery) {
-      // If searching, we can't manually refetch because RTK Query manages it
-      // But we can clear and re-trigger by toggling the query
       const temp = searchQuery;
       setSearchQuery('');
       setTimeout(() => setSearchQuery(temp), 0);
@@ -86,10 +86,12 @@ export default function HomeScreen() {
     }
   };
 
+  const styles = createStyles(theme, isDark);
+
   if (isLoading && !teams) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.loadingText}>Loading teams...</Text>
       </View>
     );
@@ -97,7 +99,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
       {/* Header Section */}
       <ImageBackground
@@ -123,11 +125,11 @@ export default function HomeScreen() {
           {/* Search Bar */}
           <View style={styles.searchWrapper}>
             <View style={styles.searchBox}>
-              <Feather name="search" size={18} color="#999" />
+              <Feather name="search" size={18} color={theme.colors.placeholder} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search teams..."
-                placeholderTextColor="#999"
+                placeholderTextColor={theme.colors.placeholder}
                 value={tempQuery}
                 onChangeText={setTempQuery}
                 onSubmitEditing={handleSearch}
@@ -135,11 +137,11 @@ export default function HomeScreen() {
               />
               {searchQuery ? (
                 <TouchableOpacity onPress={handleClearSearch}>
-                  <Feather name="x-circle" size={22} color="#ff3b30" />
+                  <Feather name="x-circle" size={22} color={theme.colors.error} />
                 </TouchableOpacity>
               ) : tempQuery !== searchQuery && tempQuery !== '' ? (
                 <TouchableOpacity onPress={handleSearch}>
-                  <Feather name="arrow-right-circle" size={22} color="#929292" />
+                  <Feather name="arrow-right-circle" size={22} color={theme.colors.textSecondary} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -186,7 +188,7 @@ export default function HomeScreen() {
             </Text>
             {error && (
               <View style={styles.errorBadge}>
-                <Feather name="alert-circle" size={12} color="#ff9500" />
+                <Feather name="alert-circle" size={12} color={theme.colors.warning} />
                 <Text style={styles.errorLabel}>Error</Text>
               </View>
             )}
@@ -194,7 +196,7 @@ export default function HomeScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyBox}>
-            <Feather name="inbox" size={50} color="#ccc" />
+            <Feather name="inbox" size={50} color={theme.colors.disabled} />
             <Text style={styles.emptyTitle}>No teams found</Text>
             <Text style={styles.emptyDesc}>
               {searchQuery 
@@ -215,8 +217,8 @@ export default function HomeScreen() {
           <RefreshControl
             refreshing={isLoading}
             onRefresh={handleRefresh}
-            tintColor="#667eea"
-            colors={['#667eea']}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -225,20 +227,20 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any, isDark: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.background,
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 12,
-    color: '#666',
+    color: theme.colors.textSecondary,
     fontSize: 16,
   },
   headerGradient: {
@@ -252,7 +254,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(30, 7, 32, 0.7)',
+    backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(30, 7, 32, 0.7)',
   },
   safeHeader: {
     paddingHorizontal: 20,
@@ -286,16 +288,18 @@ const styles = StyleSheet.create({
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.surface,
     borderRadius: 14,
     paddingHorizontal: 12,
     paddingVertical: 10,
     gap: 10,
+    borderWidth: isDark ? 1 : 0,
+    borderColor: isDark ? theme.colors.border : 'transparent',
   },
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: '#333',
+    color: theme.colors.text,
   },
   statsRow: {
     flexDirection: 'row',
@@ -303,11 +307,13 @@ const styles = StyleSheet.create({
   },
   statBox: {
     flex: 1,
-    backgroundColor: 'rgba(23, 11, 3, 0.45)',
+    backgroundColor: isDark ? 'rgba(139, 156, 255, 0.15)' : 'rgba(23, 11, 3, 0.45)',
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
     gap: 6,
+    borderWidth: isDark ? 1 : 0,
+    borderColor: isDark ? 'rgba(139, 156, 255, 0.3)' : 'transparent',
   },
   statValue: {
     fontSize: 18,
@@ -330,20 +336,22 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.colors.text,
   },
   errorBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: '#fff3cd',
+    backgroundColor: isDark ? 'rgba(255, 214, 10, 0.2)' : '#fff3cd',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
+    borderWidth: isDark ? 1 : 0,
+    borderColor: isDark ? theme.colors.warning : 'transparent',
   },
   errorLabel: {
     fontSize: 11,
-    color: '#ff9500',
+    color: theme.colors.warning,
     fontWeight: '600',
   },
   emptyBox: {
@@ -353,17 +361,17 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#999',
+    color: theme.colors.textSecondary,
     marginTop: 14,
   },
   emptyDesc: {
     fontSize: 13,
-    color: '#bbb',
+    color: theme.colors.placeholder,
     marginTop: 6,
   },
   resetBtn: {
     marginTop: 20,
-    backgroundColor: '#667eea',
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: 28,
     paddingVertical: 10,
     borderRadius: 20,

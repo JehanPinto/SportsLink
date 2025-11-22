@@ -6,6 +6,7 @@ const FAVOURITES_STORAGE_KEY = '@sportify:favourites';
 const AUTH_TOKEN_KEY = '@sportify:auth_token';
 const AUTH_USER_KEY = '@sportify:auth_user';
 const TOKEN_EXPIRY_KEY = '@sportify:token_expiry';
+const THEME_STORAGE_KEY = '@sportify:theme'; // NEW
 
 // Token expires after 7 days (adjust as needed)
 const TOKEN_EXPIRY_DAYS = 7;
@@ -21,6 +22,17 @@ export const persistenceMiddleware: Middleware<{}, RootState> = (store) => (next
       JSON.stringify(state.favourites)
     ).catch((error) => {
       console.error('Error saving favourites to storage:', error);
+    });
+  }
+
+  // Save theme to AsyncStorage whenever it changes
+  if (action.type?.startsWith('ui/')) {
+    const state = store.getState();
+    AsyncStorage.setItem(
+      THEME_STORAGE_KEY,
+      state.ui.theme
+    ).catch((error) => {
+      console.error('Error saving theme to storage:', error);
     });
   }
 
@@ -65,6 +77,19 @@ export const loadFavourites = async () => {
     console.error('Error loading favourites from storage:', error);
   }
   return null;
+};
+
+// Load theme from storage
+export const loadTheme = async () => {
+  try {
+    const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      return savedTheme;
+    }
+  } catch (error) {
+    console.error('Error loading theme from storage:', error);
+  }
+  return 'light'; // Default theme
 };
 
 // Load auth from storage with expiration check
@@ -112,6 +137,7 @@ export const clearAllStorage = async () => {
       AUTH_TOKEN_KEY,
       AUTH_USER_KEY,
       TOKEN_EXPIRY_KEY,
+      THEME_STORAGE_KEY,
     ]);
   } catch (error) {
     console.error('Error clearing storage:', error);

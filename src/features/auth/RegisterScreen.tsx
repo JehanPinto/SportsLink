@@ -1,3 +1,4 @@
+// src/features/auth/RegisterScreen.tsx
 import React from 'react';
 import {
   View,
@@ -6,11 +7,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../context/ThemeContext';
 
 const registerSchema = yup.object().shape({
   username: yup
@@ -36,6 +39,8 @@ interface RegisterFormData {
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
+  const { theme, isDark } = useTheme();
+  const styles = createStyles(theme, isDark);
 
   const {
     control,
@@ -51,6 +56,7 @@ export default function RegisterScreen() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
+    // mocked register success
     Alert.alert(
       'Registration Successful',
       'Please login with your credentials',
@@ -59,12 +65,13 @@ export default function RegisterScreen() {
           text: 'OK',
           onPress: () => navigation.navigate('Login' as never),
         },
-      ]
+      ],
     );
   };
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <Text style={styles.title}>Create Account</Text>
       <Text style={styles.subtitle}>Sign up to get started</Text>
 
@@ -77,6 +84,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={[styles.input, errors.username && styles.inputError]}
                 placeholder="Username"
+                placeholderTextColor={theme.colors.placeholder}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -97,6 +105,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={[styles.input, errors.email && styles.inputError]}
                 placeholder="Email"
+                placeholderTextColor={theme.colors.placeholder}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -118,10 +127,11 @@ export default function RegisterScreen() {
               <TextInput
                 style={[styles.input, errors.password && styles.inputError]}
                 placeholder="Password"
+                placeholderTextColor={theme.colors.placeholder}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                secureTextEntry={true}
+                secureTextEntry
                 autoCapitalize="none"
               />
               {errors.password && (
@@ -142,76 +152,76 @@ export default function RegisterScreen() {
           onPress={() => navigation.navigate('Login' as never)}
           style={styles.linkButton}
         >
-          <Text style={styles.linkText}>
-            Already have an account? Login
-          </Text>
+          <Text style={styles.linkText}>Already have an account? Login</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-  form: {
-    width: '100%',
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  inputError: {
-    borderColor: '#ff3b30',
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  linkButton: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  linkText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
-});
+const createStyles = (theme: any, isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      padding: 20,
+      justifyContent: 'center',
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: 40,
+    },
+    form: {
+      width: '100%',
+    },
+    inputContainer: {
+      marginBottom: 16,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      backgroundColor: theme.colors.surface,
+      color: theme.colors.text,
+    },
+    inputError: {
+      borderColor: theme.colors.error,
+    },
+    errorText: {
+      color: theme.colors.error,
+      fontSize: 12,
+      marginTop: 4,
+      marginLeft: 4,
+    },
+    button: {
+      backgroundColor: theme.colors.primary,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    linkButton: {
+      marginTop: 16,
+      alignItems: 'center',
+    },
+    linkText: {
+      color: theme.colors.primary,
+      fontSize: 14,
+    },
+  });

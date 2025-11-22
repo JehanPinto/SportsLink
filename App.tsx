@@ -5,9 +5,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { store } from './src/app/store';
 import RootNavigator from './src/navigation/RootNavigator';
-import { loadFavourites, loadAuth, isTokenExpired } from './src/store/persistenceMiddleware';
+import { ThemeProvider } from './src/context/ThemeContext';
+import { loadFavourites, loadAuth, loadTheme, isTokenExpired } from './src/store/persistenceMiddleware';
 import { loadFavouritesFromStorage } from './src/features/favourites/favouritesSlice';
 import { restoreAuth, logout } from './src/features/auth/authSlice';
+import { loadThemeFromStorage } from './src/features/ui/uiSlice';
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -22,13 +24,19 @@ function AppContent() {
         
         if (expired) {
           console.log('Token expired, skipping auth restoration');
-          // Just load favourites, skip auth
-          const savedFavourites = await loadFavourites();
+          // Load theme and favourites, skip auth
+          const [savedTheme, savedFavourites] = await Promise.all([
+            loadTheme(),
+            loadFavourites(),
+          ]);
+
+          dispatch(loadThemeFromStorage(savedTheme));
           dispatch(loadFavouritesFromStorage(savedFavourites));
         } else {
-          // Load auth and favourites in parallel
-          const [savedAuth, savedFavourites] = await Promise.all([
+          // Load auth, theme, and favourites in parallel
+          const [savedAuth, savedTheme, savedFavourites] = await Promise.all([
             loadAuth(),
+            loadTheme(),
             loadFavourites(),
           ]);
 
@@ -36,6 +44,9 @@ function AppContent() {
           if (savedAuth) {
             dispatch(restoreAuth(savedAuth));
           }
+
+          // Restore theme
+          dispatch(loadThemeFromStorage(savedTheme));
 
           // Restore favourites state
           dispatch(loadFavouritesFromStorage(savedFavourites));
@@ -73,10 +84,12 @@ function AppContent() {
   }
 
   return (
-    <NavigationContainer>
-      <RootNavigator />
-      <StatusBar style="auto" />
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        <RootNavigator />
+        <StatusBar style="auto" />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
 

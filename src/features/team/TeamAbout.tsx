@@ -1,5 +1,7 @@
+// src/features/team/TeamAbout.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 
 interface TeamAboutProps {
   description?: string;
@@ -7,6 +9,8 @@ interface TeamAboutProps {
 
 export default function TeamAbout({ description }: TeamAboutProps) {
   const [expanded, setExpanded] = useState(false);
+  const { theme, isDark } = useTheme();
+  const styles = createStyles(theme, isDark);
 
   if (!description) return null;
 
@@ -32,30 +36,31 @@ export default function TeamAbout({ description }: TeamAboutProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  descriptionSection: {
-    padding: 16,
-    marginTop: 8,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 12,
-  },
-  description: {
-    fontSize: 15,
-    color: '#666',
-    lineHeight: 24,
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 16,
-  },
-  readMore: {
-    fontSize: 14,
-    color: '#667eea',
-    fontWeight: '600',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-});
+const createStyles = (theme: any, isDark: boolean) =>
+  StyleSheet.create({
+    descriptionSection: {
+      padding: 16,
+      marginTop: 8,
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      marginBottom: 12,
+    },
+    description: {
+      fontSize: 15,
+      color: theme.colors.textSecondary,
+      lineHeight: 24,
+      backgroundColor: theme.colors.surface,
+      padding: 16,
+      borderRadius: 16,
+    },
+    readMore: {
+      fontSize: 14,
+      color: theme.colors.primary,
+      fontWeight: '600',
+      marginTop: 8,
+      textAlign: 'center',
+    },
+  });

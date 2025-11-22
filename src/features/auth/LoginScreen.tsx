@@ -1,3 +1,4 @@
+// src/features/auth/LoginScreen.tsx
 import React from 'react';
 import {
   View,
@@ -7,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -15,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useLoginMutation } from '../../api/authApi';
 import { useAppDispatch } from '../../hooks';
 import { setCredentials } from './authSlice';
+import { useTheme } from '../../context/ThemeContext';
 
 const loginSchema = yup.object().shape({
   username: yup
@@ -36,6 +39,8 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const [login, { isLoading }] = useLoginMutation();
+  const { theme, isDark } = useTheme();
+  const styles = createStyles(theme, isDark);
 
   const {
     control,
@@ -57,12 +62,8 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log('Attempting login with:', data);
       const result = await login(data).unwrap();
-      
-      console.log('Login successful:', result);
-      
-      // Dispatch to Redux (middleware will save to AsyncStorage automatically)
+
       dispatch(
         setCredentials({
           user: {
@@ -75,11 +76,9 @@ export default function LoginScreen() {
             image: result.image,
           },
           token: result.accessToken,
-        })
+        }),
       );
     } catch (error: any) {
-      console.error('Login error:', error);
-      
       Alert.alert(
         'Login Failed',
         error?.data?.message || 'Invalid credentials. Please try again.',
@@ -89,6 +88,8 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
       <Text style={styles.title}>Sportify</Text>
       <Text style={styles.subtitle}>Login to your account</Text>
 
@@ -101,6 +102,7 @@ export default function LoginScreen() {
               <TextInput
                 style={[styles.input, errors.username && styles.inputError]}
                 placeholder="Username"
+                placeholderTextColor={theme.colors.placeholder}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -116,15 +118,16 @@ export default function LoginScreen() {
         <Controller
           control={control}
           name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, onBlur, value} }) => (
             <View style={styles.inputContainer}>
               <TextInput
                 style={[styles.input, errors.password && styles.inputError]}
                 placeholder="Password"
+                placeholderTextColor={theme.colors.placeholder}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                secureTextEntry={true}
+                secureTextEntry
                 autoCapitalize="none"
               />
               {errors.password && (
@@ -162,84 +165,84 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.hint}>
-          Test: emilys / emilyspass
-        </Text>
+        <Text style={styles.hint}>Test: emilys / emilyspass</Text>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-  form: {
-    width: '100%',
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  inputError: {
-    borderColor: '#ff3b30',
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  linkButton: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  linkText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
-  hint: {
-    marginTop: 24,
-    textAlign: 'center',
-    color: '#999',
-    fontSize: 12,
-  },
-});
+const createStyles = (theme: any, isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      padding: 20,
+      justifyContent: 'center',
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: 40,
+    },
+    form: {
+      width: '100%',
+    },
+    inputContainer: {
+      marginBottom: 16,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      backgroundColor: theme.colors.surface,
+      color: theme.colors.text,
+    },
+    inputError: {
+      borderColor: theme.colors.error,
+    },
+    errorText: {
+      color: theme.colors.error,
+      fontSize: 12,
+      marginTop: 4,
+      marginLeft: 4,
+    },
+    button: {
+      backgroundColor: theme.colors.primary,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    linkButton: {
+      marginTop: 16,
+      alignItems: 'center',
+    },
+    linkText: {
+      color: theme.colors.primary,
+      fontSize: 14,
+    },
+    hint: {
+      marginTop: 24,
+      textAlign: 'center',
+      color: theme.colors.textSecondary,
+      fontSize: 12,
+    },
+  });
