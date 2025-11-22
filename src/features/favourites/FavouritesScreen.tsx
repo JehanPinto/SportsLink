@@ -6,23 +6,26 @@ import {
   StyleSheet,
   TouchableOpacity,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { selectFavouriteTeams, clearAllFavourites } from './favouritesSlice';
-import { useSearchTeamsQuery } from '../../api/sportsApi';
+import { selectFavouriteTeams, clearTeamFavourites } from './favouritesSlice';
+import { useListLeagueTeamsQuery } from '../../api/sportsApi';
 import MatchCard from '../home/MatchCard';
+
+const DEFAULT_LEAGUE = 'English Premier League';
 
 export default function FavouritesScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const favouriteTeamIds = useAppSelector(selectFavouriteTeams);
   
-  // Fetch teams data (we'll use Arsenal search as base, then filter)
-  const { data: allTeams } = useSearchTeamsQuery('Arsenal');
+  // Fetch ALL teams from the league
+  const { data: allTeams, isLoading } = useListLeagueTeamsQuery(DEFAULT_LEAGUE);
   
   // Filter only favourite teams
   const favouriteTeams = allTeams?.filter(team => 
@@ -31,16 +34,39 @@ export default function FavouritesScreen() {
 
   const handleClearAll = () => {
     if (favouriteTeamIds.length > 0) {
-      dispatch(clearAllFavourites());
+      dispatch(clearTeamFavourites());
     }
   };
 
   const handleTeamPress = (team: any) => {
     navigation.navigate('TeamDetail', { team });
   };
-  
 
-  const handleBrowseTeams = () => {navigation.navigate('HomeTab');};
+  const handleBrowseTeams = () => {
+    navigation.navigate('HomeTab');
+  };
+
+  // Show loading state while fetching teams
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <SafeAreaView edges={['top']} style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.titleRow}>
+              <Feather name="heart" size={28} color="#ff3b30" />
+              <Text style={styles.title}>My Favourites</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#667eea" />
+          <Text style={styles.loadingText}>Loading favourites...</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -104,6 +130,17 @@ export default function FavouritesScreen() {
           )}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            favouriteTeamIds.length > 0 && favouriteTeams.length === 0 ? (
+              <View style={styles.emptyBox}>
+                <Feather name="alert-circle" size={50} color="#ff9500" />
+                <Text style={styles.emptyTitle}>Teams Not Found</Text>
+                <Text style={styles.emptyDesc}>
+                  Some of your favourite teams couldn't be loaded
+                </Text>
+              </View>
+            ) : null
+          }
         />
       )}
     </View>
@@ -114,6 +151,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    color: '#666',
+    fontSize: 16,
   },
   header: {
     backgroundColor: '#fff',
@@ -229,5 +276,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  emptyBox: {
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  emptyDesc: {
+    fontSize: 13,
+    color: '#bbb',
+    marginTop: 6,
+    textAlign: 'center',
   },
 });

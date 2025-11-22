@@ -15,21 +15,44 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
-import { useSearchTeamsQuery } from '../../api/sportsApi';
+import { useListLeagueTeamsQuery, useSearchTeamsQuery } from '../../api/sportsApi';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logout, selectCurrentUser } from '../auth/authSlice';
 import { selectFavouriteTeams } from '../favourites/favouritesSlice';
 import { deleteToken } from '../../utils/storage';
 import MatchCard from './MatchCard';
 
+const DEFAULT_LEAGUE = 'English Premier League';
+
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
   const favouriteTeams = useAppSelector(selectFavouriteTeams);
-  const [searchQuery, setSearchQuery] = useState('Arsenal');
-  const [tempQuery, setTempQuery] = useState('Arsenal');
-  const { data: teams, isLoading, error, refetch } = useSearchTeamsQuery(searchQuery);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [tempQuery, setTempQuery] = useState('');
+
+  // Fetch default league teams
+  const { 
+    data: leagueTeams, 
+    isLoading: isLoadingLeague, 
+    refetch: refetchLeague 
+  } = useListLeagueTeamsQuery(DEFAULT_LEAGUE);
+
+  // Fetch search results (only when searchQuery is not empty)
+  const { 
+    data: searchResults, 
+    isLoading: isLoadingSearch, 
+    error: searchError 
+  } = useSearchTeamsQuery(searchQuery, {
+    skip: !searchQuery, // Don't fetch if searchQuery is empty
+  });
+
+  // Determine which data to show
+  const teams = searchQuery ? searchResults : leagueTeams;
+  const isLoading = searchQuery ? isLoadingSearch : isLoadingLeague;
+  const error = searchQuery ? searchError : null;
 
   const handleLogout = async () => {
     await deleteToken('auth_token');
@@ -42,8 +65,25 @@ export default function HomeScreen() {
     }
   };
 
+  const handleClearSearch = () => {
+    setTempQuery('');
+    setSearchQuery('');
+  };
+
   const handleTeamPress = (team: any) => {
     navigation.navigate('TeamDetail', { team });
+  };
+
+  const handleRefresh = () => {
+    if (searchQuery) {
+      // If searching, we can't manually refetch because RTK Query manages it
+      // But we can clear and re-trigger by toggling the query
+      const temp = searchQuery;
+      setSearchQuery('');
+      setTimeout(() => setSearchQuery(temp), 0);
+    } else {
+      refetchLeague();
+    }
   };
 
   if (isLoading && !teams) {
@@ -93,11 +133,15 @@ export default function HomeScreen() {
                 onSubmitEditing={handleSearch}
                 returnKeyType="search"
               />
-              {tempQuery !== searchQuery && (
+              {searchQuery ? (
+                <TouchableOpacity onPress={handleClearSearch}>
+                  <Feather name="x-circle" size={22} color="#ff3b30" />
+                </TouchableOpacity>
+              ) : tempQuery !== searchQuery && tempQuery !== '' ? (
                 <TouchableOpacity onPress={handleSearch}>
                   <Feather name="arrow-right-circle" size={22} color="#929292" />
                 </TouchableOpacity>
-              )}
+              ) : null}
             </View>
           </View>
 
@@ -136,7 +180,9 @@ export default function HomeScreen() {
         ListHeaderComponent={
           <View style={styles.listHeader}>
             <Text style={styles.sectionTitle}>
-              {searchQuery ? `${searchQuery} Teams` : 'Popular Teams'}
+              {searchQuery 
+                ? `Search: "${searchQuery}"` 
+                : `${DEFAULT_LEAGUE} Teams`}
             </Text>
             {error && (
               <View style={styles.errorBadge}>
@@ -150,22 +196,25 @@ export default function HomeScreen() {
           <View style={styles.emptyBox}>
             <Feather name="inbox" size={50} color="#ccc" />
             <Text style={styles.emptyTitle}>No teams found</Text>
-            <Text style={styles.emptyDesc}>Try searching for a different team</Text>
-            <TouchableOpacity 
-              style={styles.resetBtn}
-              onPress={() => {
-                setTempQuery('Arsenal');
-                setSearchQuery('Arsenal');
-              }}
-            >
-              <Text style={styles.resetBtnText}>Search Arsenal</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyDesc}>
+              {searchQuery 
+                ? `No results for "${searchQuery}"`
+                : 'No teams available'}
+            </Text>
+            {searchQuery && (
+              <TouchableOpacity 
+                style={styles.resetBtn}
+                onPress={handleClearSearch}
+              >
+                <Text style={styles.resetBtnText}>Clear Search</Text>
+              </TouchableOpacity>
+            )}
           </View>
         }
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
-            onRefresh={refetch}
+            onRefresh={handleRefresh}
             tintColor="#667eea"
             colors={['#667eea']}
           />

@@ -2,11 +2,11 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const BASE_URL = 'https://www.thesportsdb.com/api/v1/json/3/';
 
-interface Team {
+export interface Team {
   idTeam: string;
   strTeam: string;
-  strTeamBadge?: string; // Keep for backward compatibility
-  strBadge: string; // This is the actual field from API
+  strTeamBadge?: string;
+  strBadge: string;
   strLogo?: string;
   strStadium: string;
   strDescriptionEN: string;
@@ -49,6 +49,10 @@ interface SearchTeamsResponse {
   teams: Team[] | null;
 }
 
+interface TeamsListResponse {
+  teams: Team[] | null;
+}
+
 interface EventsResponse {
   events: Event[] | null;
 }
@@ -61,6 +65,13 @@ export const sportsApi = createApi({
   reducerPath: 'sportsApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
+    // NEW: list all teams in a given league
+    listLeagueTeams: builder.query<Team[], string>({
+      query: (leagueName) =>
+        `search_all_teams.php?l=${encodeURIComponent(leagueName)}`,
+      transformResponse: (response: TeamsListResponse) =>
+        response.teams || [],
+    }),
     searchTeams: builder.query<Team[], string>({
       query: (teamName) => `searchteams.php?t=${teamName}`,
       transformResponse: (response: SearchTeamsResponse) => response.teams || [],
@@ -91,6 +102,7 @@ export const sportsApi = createApi({
 });
 
 export const {
+  useListLeagueTeamsQuery,
   useSearchTeamsQuery,
   useSearchEventsQuery,
   useGetNextEventsQuery,
