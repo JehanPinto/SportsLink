@@ -41,6 +41,20 @@ const favouritesSlice = createSlice({
         state.playerIds.push(action.payload);
       }
     },
+    clearAllFavourites: (state) => {
+      state.teamIds = [];
+      state.eventIds = [];
+      state.playerIds = [];
+    },
+    clearTeamFavourites: (state) => {
+      state.teamIds = [];
+    },
+    clearEventFavourites: (state) => {
+      state.eventIds = [];
+    },
+    clearPlayerFavourites: (state) => {
+      state.playerIds = [];
+    },
   },
 });
 
@@ -48,6 +62,10 @@ export const {
   toggleTeamFavourite,
   toggleEventFavourite,
   togglePlayerFavourite,
+  clearAllFavourites,
+  clearTeamFavourites,
+  clearEventFavourites,
+  clearPlayerFavourites,
 } = favouritesSlice.actions;
 
 export const selectFavouriteTeams = (state: RootState) => state.favourites.teamIds;

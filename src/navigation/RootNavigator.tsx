@@ -4,11 +4,11 @@ import { useAppSelector } from '../hooks';
 import { selectIsAuthenticated } from '../features/auth/authSlice';
 import LoginScreen from '../features/auth/LoginScreen';
 import RegisterScreen from '../features/auth/RegisterScreen';
-import HomeScreen from '../features/home/HomeScreen';
-import TeamDetailScreen from '../features/team/teamDetailScreen'; // <- capitalize the file name if needed
-import { RootStackParamList } from './types'; // <- new
+import TabNavigator from './TabNavigator';
+import TeamDetailScreen from '../features/team/teamDetailScreen';
+import { RootStackParamList } from './types';
 
-const Stack = createNativeStackNavigator<RootStackParamList>(); // <- typed stack
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
@@ -22,7 +22,7 @@ export default function RootNavigator() {
         </>
       ) : (
         <>
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Home" component={TabNavigator} />
           <Stack.Screen name="TeamDetail" component={TeamDetailScreen} />
         </>
       )}
