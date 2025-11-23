@@ -11,26 +11,15 @@ import {
   Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  useRoute,
-  useNavigation,
-  RouteProp,
-  NavigationProp,
-} from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { RootStackParamList } from '../../navigation/types';
 import { useLookupPlayerQuery } from '../../api/sportsApi';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import {
-  togglePlayerFavourite,
-  selectFavouritePlayers,
-} from '../favourites/favouritesSlice';
+import { togglePlayerFavourite, selectFavouritePlayers } from '../favourites/favouritesSlice';
 import { useTheme } from '../../context/ThemeContext';
 
-type PlayerDetailsScreenRouteProp = RouteProp<
-  RootStackParamList,
-  'PlayerDetails'
->;
+type PlayerDetailsScreenRouteProp = RouteProp<RootStackParamList, 'PlayerDetails'>;
 
 export default function PlayerDetailsScreen() {
   const route = useRoute<PlayerDetailsScreenRouteProp>();
@@ -73,10 +62,7 @@ export default function PlayerDetailsScreen() {
         <View style={styles.centered}>
           <Feather name="alert-circle" size={50} color={theme.colors.error} />
           <Text style={styles.errorText}>Failed to load player details</Text>
-          <TouchableOpacity
-            style={styles.retryButton}
-            onPress={() => navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.retryButton} onPress={() => navigation.goBack()}>
             <Text style={styles.retryText}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -87,21 +73,11 @@ export default function PlayerDetailsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <Feather
-            name="arrow-left"
-            size={24}
-            color={theme.colors.text}
-          />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Feather name="arrow-left" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Player Details</Text>
-        <TouchableOpacity
-          onPress={handleFavouriteToggle}
-          style={styles.favouriteButton}
-        >
+        <TouchableOpacity onPress={handleFavouriteToggle} style={styles.favouriteButton}>
           <Feather
             name="heart"
             size={24}
@@ -127,33 +103,21 @@ export default function PlayerDetailsScreen() {
 
           {player.strPosition && (
             <View style={styles.positionBadge}>
-              <Feather
-                name="user"
-                size={14}
-                color={theme.colors.primary}
-              />
+              <Feather name="user" size={14} color={theme.colors.primary} />
               <Text style={styles.positionText}>{player.strPosition}</Text>
             </View>
           )}
 
           {player.strTeam && (
             <View style={styles.teamRow}>
-              <Feather
-                name="shield"
-                size={16}
-                color={theme.colors.textSecondary}
-              />
+              <Feather name="shield" size={16} color={theme.colors.textSecondary} />
               <Text style={styles.teamText}>{player.strTeam}</Text>
             </View>
           )}
 
           {player.strNationality && (
             <View style={styles.teamRow}>
-              <Feather
-                name="flag"
-                size={16}
-                color={theme.colors.textSecondary}
-              />
+              <Feather name="flag" size={16} color={theme.colors.textSecondary} />
               <Text style={styles.teamText}>{player.strNationality}</Text>
             </View>
           )}
@@ -161,43 +125,19 @@ export default function PlayerDetailsScreen() {
 
         <View style={styles.statsGrid}>
           {player.dateBorn && (
-            <StatCard
-              icon="calendar"
-              label="Birth Date"
-              value={formatDate(player.dateBorn)}
-            />
+            <StatCard icon="calendar" label="Birth Date" value={formatDate(player.dateBorn)} />
           )}
           {player.strHeight && (
-            <StatCard
-              icon="trending-up"
-              label="Height"
-              value={player.strHeight}
-            />
+            <StatCard icon="trending-up" label="Height" value={player.strHeight} />
           )}
-          {player.strWeight && (
-            <StatCard
-              icon="activity"
-              label="Weight"
-              value={player.strWeight}
-            />
-          )}
-          {player.strNumber && (
-            <StatCard
-              icon="hash"
-              label="Number"
-              value={player.strNumber}
-            />
-          )}
+          {player.strWeight && <StatCard icon="activity" label="Weight" value={player.strWeight} />}
+          {player.strNumber && <StatCard icon="hash" label="Number" value={player.strNumber} />}
         </View>
 
         {player.strDescriptionEN && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather
-                name="file-text"
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Feather name="file-text" size={20} color={theme.colors.primary} />
               <Text style={styles.sectionTitle}>Biography</Text>
             </View>
             <View style={styles.bioCard}>
@@ -206,45 +146,26 @@ export default function PlayerDetailsScreen() {
           </View>
         )}
 
-        {(player.strBirthLocation ||
-          player.strSigning ||
-          player.strWage) && (
+        {(player.strBirthLocation || player.strSigning || player.strWage) && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather
-                name="info"
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Feather name="info" size={20} color={theme.colors.primary} />
               <Text style={styles.sectionTitle}>Additional Info</Text>
             </View>
             <View style={styles.infoDetailCard}>
               {player.strBirthLocation && (
-                <InfoRow
-                  label="Birth Place"
-                  value={player.strBirthLocation}
-                />
+                <InfoRow label="Birth Place" value={player.strBirthLocation} />
               )}
-              {player.strSigning && (
-                <InfoRow label="Signed" value={player.strSigning} />
-              )}
-              {player.strWage && (
-                <InfoRow label="Wage" value={player.strWage} />
-              )}
+              {player.strSigning && <InfoRow label="Signed" value={player.strSigning} />}
+              {player.strWage && <InfoRow label="Wage" value={player.strWage} />}
             </View>
           </View>
         )}
 
-        {(player.strFacebook ||
-          player.strTwitter ||
-          player.strInstagram) && (
+        {(player.strFacebook || player.strTwitter || player.strInstagram) && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather
-                name="share-2"
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Feather name="share-2" size={20} color={theme.colors.primary} />
               <Text style={styles.sectionTitle}>Social Media</Text>
             </View>
             <View style={styles.socialContainer}>
@@ -285,15 +206,7 @@ export default function PlayerDetailsScreen() {
   );
 }
 
-function StatCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: string;
-  label: string;
-  value: string;
-}) {
+function StatCard({ icon, label, value }: { icon: string; label: string; value: string }) {
   const { theme, isDark } = useTheme();
   const styles = statStyles(theme, isDark);
 
@@ -318,9 +231,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
         borderBottomColor: theme.colors.border,
       }}
     >
-      <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-        {label}
-      </Text>
+      <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>{label}</Text>
       <Text
         style={{
           fontSize: 14,

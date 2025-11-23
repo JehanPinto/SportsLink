@@ -24,9 +24,5 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const theme = themeType === 'dark' ? darkTheme : lightTheme;
   const isDark = themeType === 'dark';
 
-  return (
-    <ThemeContext.Provider value={{ theme, isDark }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ theme, isDark }}>{children}</ThemeContext.Provider>;
 };

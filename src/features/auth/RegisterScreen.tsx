@@ -26,10 +26,7 @@ const registerSchema = yup.object().shape({
     .required('Username is required')
     .min(3, 'Username must be at least 3 characters')
     .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
-  email: yup
-    .string()
-    .required('Email is required')
-    .email('Please enter a valid email'),
+  email: yup.string().required('Email is required').email('Please enter a valid email'),
   password: yup
     .string()
     .required('Password is required')
@@ -105,7 +102,6 @@ export default function RegisterScreen() {
       setTimeout(() => {
         navigation.navigate('Login');
       }, 3000);
-
     } catch (error: any) {
       Alert.alert(
         '❌ Registration Failed',
@@ -122,19 +118,16 @@ export default function RegisterScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      
+
       <SafeAreaView style={styles.safeArea} edges={['top']}>
-        <ScrollView 
+        <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.backButton}
-            >
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
               <Feather name="arrow-left" size={24} color={theme.colors.text} />
             </TouchableOpacity>
             <Text style={styles.title}>Create Account</Text>
@@ -153,7 +146,12 @@ export default function RegisterScreen() {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>First Name *</Text>
                   <View style={styles.inputWrapper}>
-                    <Feather name="user" size={18} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <Feather
+                      name="user"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                      style={styles.inputIcon}
+                    />
                     <TextInput
                       style={[styles.input, errors.firstName && styles.inputError]}
                       placeholder="John"
@@ -181,7 +179,12 @@ export default function RegisterScreen() {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Last Name *</Text>
                   <View style={styles.inputWrapper}>
-                    <Feather name="user" size={18} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <Feather
+                      name="user"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                      style={styles.inputIcon}
+                    />
                     <TextInput
                       style={[styles.input, errors.lastName && styles.inputError]}
                       placeholder="Doe"
@@ -209,7 +212,12 @@ export default function RegisterScreen() {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Username *</Text>
                   <View style={styles.inputWrapper}>
-                    <Feather name="at-sign" size={18} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <Feather
+                      name="at-sign"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                      style={styles.inputIcon}
+                    />
                     <TextInput
                       style={[styles.input, errors.username && styles.inputError]}
                       placeholder="johndoe"
@@ -237,7 +245,12 @@ export default function RegisterScreen() {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Email *</Text>
                   <View style={styles.inputWrapper}>
-                    <Feather name="mail" size={18} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <Feather
+                      name="mail"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                      style={styles.inputIcon}
+                    />
                     <TextInput
                       style={[styles.input, errors.email && styles.inputError]}
                       placeholder="john@example.com"
@@ -266,7 +279,12 @@ export default function RegisterScreen() {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Password *</Text>
                   <View style={styles.inputWrapper}>
-                    <Feather name="lock" size={18} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <Feather
+                      name="lock"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                      style={styles.inputIcon}
+                    />
                     <TextInput
                       style={[styles.input, errors.password && styles.inputError]}
                       placeholder="••••••••"
@@ -295,7 +313,12 @@ export default function RegisterScreen() {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Confirm Password *</Text>
                   <View style={styles.inputWrapper}>
-                    <Feather name="lock" size={18} color={theme.colors.textSecondary} style={styles.inputIcon} />
+                    <Feather
+                      name="lock"
+                      size={18}
+                      color={theme.colors.textSecondary}
+                      style={styles.inputIcon}
+                    />
                     <TextInput
                       style={[styles.input, errors.confirmPassword && styles.inputError]}
                       placeholder="••••••••"
@@ -351,7 +374,7 @@ export default function RegisterScreen() {
   );
 }
 
-const createStyles = (theme: any, isDark: boolean) =>
+const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,

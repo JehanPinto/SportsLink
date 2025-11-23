@@ -42,14 +42,14 @@ export default function LoginScreen() {
   const [login, { isLoading: isApiLoading }] = useLoginMutation();
   const { theme, isDark } = useTheme();
   const [isLocalLoading, setIsLocalLoading] = React.useState(false);
-  
+
   const isLoading = isApiLoading || isLocalLoading;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
+    
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
@@ -58,15 +58,13 @@ export default function LoginScreen() {
     },
   });
 
-  
-
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsLocalLoading(true);
-      
+
       // Step 1: Try local user first
       const localUser = await loginLocalUser(data.username, data.password);
-      
+
       if (localUser) {
         // Login successful with local user
         dispatch(
@@ -94,7 +92,7 @@ export default function LoginScreen() {
       dispatch(
         setCredentials({
           user: {
-            id: result.id,
+            id: parseInt(result.id, 10),
             username: result.username,
             email: result.email,
             firstName: result.firstName,
@@ -105,17 +103,15 @@ export default function LoginScreen() {
           token: result.accessToken,
         })
       );
-    } catch (error: any) {
+    } catch {
       setIsLocalLoading(false);
-      Alert.alert(
-        'Login Failed',
-        'Invalid credentials. Please check your username and password.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Login Failed', 'Invalid credentials. Please check your username and password.', [
+        { text: 'OK' },
+      ]);
     }
   };
 
-  const styles = createStyles(theme, isDark);
+  const styles = createStyles(theme);
 
   return (
     <View style={styles.container}>
@@ -139,9 +135,7 @@ export default function LoginScreen() {
                 value={value}
                 autoCapitalize="none"
               />
-              {errors.username && (
-                <Text style={styles.errorText}>{errors.username.message}</Text>
-              )}
+              {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
             </View>
           )}
         />
@@ -161,9 +155,7 @@ export default function LoginScreen() {
                 secureTextEntry
                 autoCapitalize="none"
               />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password.message}</Text>
-              )}
+              {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
             </View>
           )}
         />
@@ -180,12 +172,7 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-       
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          style={styles.linkButton}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.linkButton}>
           <Text style={styles.linkText}>
             Don't have an account? <Text style={styles.linkTextBold}>Register</Text>
           </Text>
@@ -197,7 +184,7 @@ export default function LoginScreen() {
   );
 }
 
-const createStyles = (theme: any, isDark: boolean) =>
+const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,

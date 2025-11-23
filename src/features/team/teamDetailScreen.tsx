@@ -1,11 +1,6 @@
 // src/features/team/TeamDetailScreen.tsx
 import { Feather } from '@expo/vector-icons';
-import {
-  RouteProp,
-  useNavigation,
-  useRoute,
-  NavigationProp,
-} from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute, NavigationProp } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
@@ -17,10 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  useGetLastEventsQuery,
-  useGetNextEventsQuery,
-} from '../../api/sportsApi';
+import { useGetLastEventsQuery, useGetNextEventsQuery } from '../../api/sportsApi';
 import { RootStackParamList } from '../../navigation/types';
 import EventCard from './EventCard';
 import TeamAbout from './TeamAbout';
@@ -87,10 +79,7 @@ export default function TeamDetailScreen() {
         }
       >
         {/* Team Badge */}
-        <TeamBadge
-          badgeUrl={team.strBadge || team.strTeamBadge}
-          teamName={team.strTeam}
-        />
+        <TeamBadge badgeUrl={team.strBadge || team.strTeamBadge} teamName={team.strTeam} />
 
         {/* Team Name */}
         <Text style={styles.teamName}>{team.strTeam}</Text>
@@ -102,9 +91,7 @@ export default function TeamDetailScreen() {
         {/* View Squad Button */}
         <TouchableOpacity
           style={styles.squadButton}
-          onPress={() =>
-            navigation.navigate('TeamSquad', { teamName: team.strTeam })
-          }
+          onPress={() => navigation.navigate('TeamSquad', { teamName: team.strTeam })}
         >
           <Feather name="users" size={20} color={theme.colors.primary} />
           <Text style={styles.squadButtonText}>View Full Squad</Text>
@@ -123,9 +110,9 @@ export default function TeamDetailScreen() {
               <ActivityIndicator size="small" color={theme.colors.primary} />
             </View>
           ) : nextEvents && nextEvents.length > 0 ? (
-            nextEvents.slice(0, 5).map((event) => (
-              <EventCard key={event.idEvent} event={event} isUpcoming />
-            ))
+            nextEvents
+              .slice(0, 5)
+              .map((event) => <EventCard key={event.idEvent} event={event} isUpcoming />)
           ) : (
             <View style={styles.emptySection}>
               <Feather name="inbox" size={40} color={theme.colors.disabled} />
@@ -146,9 +133,9 @@ export default function TeamDetailScreen() {
               <ActivityIndicator size="small" color={theme.colors.primary} />
             </View>
           ) : lastEvents && lastEvents.length > 0 ? (
-            lastEvents.slice(0, 5).map((event) => (
-              <EventCard key={event.idEvent} event={event} isUpcoming={false} />
-            ))
+            lastEvents
+              .slice(0, 5)
+              .map((event) => <EventCard key={event.idEvent} event={event} isUpcoming={false} />)
           ) : (
             <View style={styles.emptySection}>
               <Feather name="inbox" size={40} color={theme.colors.disabled} />

@@ -7,18 +7,8 @@ interface LoginRequest {
   password: string;
 }
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  image: string;
-}
-
 interface LoginResponse {
-  id: number;
+  id: string;
   username: string;
   email: string;
   firstName: string;
@@ -26,11 +16,12 @@ interface LoginResponse {
   gender: string;
   image: string;
   accessToken: string;
+  refreshToken: string;
 }
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: AUTH_BASE_URL,
     prepareHeaders: (headers) => {
       headers.set('Content-Type', 'application/json');

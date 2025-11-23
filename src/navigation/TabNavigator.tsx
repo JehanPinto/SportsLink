@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -49,9 +48,7 @@ export default function TabNavigator() {
         component={HomeScreen}
         options={{
           tabBarLabel: '',
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} />,
         }}
       />
 
@@ -60,17 +57,14 @@ export default function TabNavigator() {
         component={FavouritesScreen}
         options={{
           tabBarLabel: '',
-          tabBarBadge:
-            favouriteTeams.length > 0 ? favouriteTeams.length : undefined,
+          tabBarBadge: favouriteTeams.length > 0 ? favouriteTeams.length : undefined,
           tabBarBadgeStyle: {
             backgroundColor: theme.colors.error,
             color: '#fff',
             fontSize: 10,
             fontWeight: 'bold',
           },
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="heart" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Feather name="heart" size={size} color={color} />,
         }}
       />
 
@@ -79,9 +73,7 @@ export default function TabNavigator() {
         component={ProfileScreen}
         options={{
           tabBarLabel: '',
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Feather name="user" size={size} color={color} />,
         }}
       />
     </Tab.Navigator>

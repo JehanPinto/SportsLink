@@ -13,25 +13,21 @@ const TOKEN_EXPIRY_DAYS = 7;
 
 export const persistenceMiddleware: Middleware<{}, RootState> = (store) => (next) => (action) => {
   const result = next(action);
-  
+
   // Save favourites to AsyncStorage whenever they change
   if (action.type?.startsWith('favourites/')) {
     const state = store.getState();
-    AsyncStorage.setItem(
-      FAVOURITES_STORAGE_KEY,
-      JSON.stringify(state.favourites)
-    ).catch((error) => {
-      console.error('Error saving favourites to storage:', error);
-    });
+    AsyncStorage.setItem(FAVOURITES_STORAGE_KEY, JSON.stringify(state.favourites)).catch(
+      (error) => {
+        console.error('Error saving favourites to storage:', error);
+      }
+    );
   }
 
   // Save theme to AsyncStorage whenever it changes
   if (action.type?.startsWith('ui/')) {
     const state = store.getState();
-    AsyncStorage.setItem(
-      THEME_STORAGE_KEY,
-      state.ui.theme
-    ).catch((error) => {
+    AsyncStorage.setItem(THEME_STORAGE_KEY, state.ui.theme).catch((error) => {
       console.error('Error saving theme to storage:', error);
     });
   }
@@ -39,10 +35,10 @@ export const persistenceMiddleware: Middleware<{}, RootState> = (store) => (next
   // Save auth state when user logs in
   if (action.type === 'auth/setCredentials') {
     const { token, user } = action.payload;
-    
+
     // Calculate expiration time
-    const expiryTime = Date.now() + (TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
-    
+    const expiryTime = Date.now() + TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
     Promise.all([
       AsyncStorage.setItem(AUTH_TOKEN_KEY, token),
       AsyncStorage.setItem(AUTH_USER_KEY, JSON.stringify(user)),
@@ -54,15 +50,11 @@ export const persistenceMiddleware: Middleware<{}, RootState> = (store) => (next
 
   // Clear auth state when user logs out
   if (action.type === 'auth/logout') {
-    AsyncStorage.multiRemove([
-      AUTH_TOKEN_KEY, 
-      AUTH_USER_KEY,
-      TOKEN_EXPIRY_KEY,
-    ]).catch((error) => {
+    AsyncStorage.multiRemove([AUTH_TOKEN_KEY, AUTH_USER_KEY, TOKEN_EXPIRY_KEY]).catch((error) => {
       console.error('Error clearing auth from storage:', error);
     });
   }
-  
+
   return result;
 };
 
@@ -111,11 +103,7 @@ export const loadAuth = async () => {
       if (Date.now() > expiry) {
         console.log('Token has expired, clearing auth data');
         // Token expired, clear storage
-        await AsyncStorage.multiRemove([
-          AUTH_TOKEN_KEY,
-          AUTH_USER_KEY,
-          TOKEN_EXPIRY_KEY,
-        ]);
+        await AsyncStorage.multiRemove([AUTH_TOKEN_KEY, AUTH_USER_KEY, TOKEN_EXPIRY_KEY]);
         return null;
       }
 
@@ -149,7 +137,7 @@ export const isTokenExpired = async (): Promise<boolean> => {
   try {
     const expiryString = await AsyncStorage.getItem(TOKEN_EXPIRY_KEY);
     if (!expiryString) return true;
-    
+
     const expiry = parseInt(expiryString, 10);
     return Date.now() > expiry;
   } catch (error) {

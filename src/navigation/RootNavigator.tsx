@@ -27,9 +27,9 @@ export default function RootNavigator() {
         <>
           <Stack.Screen name="Home" component={TabNavigator} />
           <Stack.Screen name="TeamDetail" component={TeamDetailScreen} />
-          <Stack.Screen name="MatchDetails" component={MatchDetailsScreen} /> 
+          <Stack.Screen name="MatchDetails" component={MatchDetailsScreen} />
           <Stack.Screen name="PlayerDetails" component={PlayerDetailsScreen} />
-          <Stack.Screen name="TeamSquad" component={TeamSquadScreen} /> 
+          <Stack.Screen name="TeamSquad" component={TeamSquadScreen} />
         </>
       )}
     </Stack.Navigator>

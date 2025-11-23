@@ -1,0 +1,139 @@
+import React from 'react';
+import { render, fireEvent} from '@testing-library/react-native';
+import { Provider } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+import { configureStore } from '@reduxjs/toolkit';
+import LoginScreen from '../LoginScreen';
+import authReducer from '../authSlice';
+
+// Mock ThemeContext - FIX: context (singular)
+jest.mock('../../../context/ThemeContext', () => ({
+  useTheme: () => ({
+    theme: {
+      colors: {
+        background: '#ffffff',
+        text: '#000000',
+        textSecondary: '#666666',
+        placeholder: '#999999',
+        border: '#cccccc',
+        surface: '#f5f5f5',
+        error: '#ff0000',
+        primary: '#007bff',
+      },
+    },
+    isDark: false,
+  }),
+}));
+
+// Mock navigation
+const mockNavigate = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useNavigation: () => ({
+    navigate: mockNavigate,
+    goBack: jest.fn(),
+  }),
+}));
+
+// Mock auth API
+jest.mock('../../../api/authApi', () => ({
+  useLoginMutation: () => [
+    jest.fn().mockResolvedValue({
+      unwrap: () =>
+        Promise.resolve({
+          id: '1',
+          username: 'testuser',
+          email: 'test@test.com',
+          firstName: 'Test',
+          lastName: 'User',
+          accessToken: 'mock-token',
+        }),
+    }),
+    { isLoading: false },
+  ],
+}));
+
+// Mock local storage
+jest.mock('../../../utils/localAuthStorage', () => ({
+  loginLocalUser: jest.fn(() => Promise.resolve(null)),
+}));
+
+// Mock LinearGradient
+jest.mock('expo-linear-gradient', () => ({
+  LinearGradient: 'LinearGradient',
+}));
+
+// Mock react-hook-form
+jest.mock('react-hook-form', () => ({
+  useForm: () => ({
+    control: {},
+    handleSubmit: (fn: any) => fn,
+    formState: { errors: {} },
+    setValue: jest.fn(),
+  }),
+  Controller: ({ render }: any) =>
+    render({
+      field: {
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        value: '',
+      },
+    }),
+}));
+
+const createTestStore = () => {
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+    },
+  });
+};
+
+describe('LoginScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should render login screen elements', () => {
+    const store = createTestStore();
+    const { getByText } = render(
+      <Provider store={store}>
+        <NavigationContainer>
+          <LoginScreen />
+        </NavigationContainer>
+      </Provider>
+    );
+
+    expect(getByText('Sportify')).toBeTruthy();
+  });
+
+  it('should have username and password inputs', () => {
+    const store = createTestStore();
+    const { getByPlaceholderText } = render(
+      <Provider store={store}>
+        <NavigationContainer>
+          <LoginScreen />
+        </NavigationContainer>
+      </Provider>
+    );
+
+    expect(getByPlaceholderText('Username')).toBeTruthy();
+    expect(getByPlaceholderText('Password')).toBeTruthy();
+  });
+
+  it('should navigate to Register when clicking register link', () => {
+    const store = createTestStore();
+    const { getByText } = render(
+      <Provider store={store}>
+        <NavigationContainer>
+          <LoginScreen />
+        </NavigationContainer>
+      </Provider>
+    );
+
+    const registerLink = getByText('Register');
+    fireEvent.press(registerLink);
+
+    expect(mockNavigate).toHaveBeenCalledWith('Register');
+  });
+});

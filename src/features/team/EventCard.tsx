@@ -40,27 +40,17 @@ export default function EventCard({ event, isUpcoming = false }: EventCardProps)
     navigation.navigate('MatchDetails', { eventId: event.idEvent });
   };
 
-  const hasScore =
-    event.intHomeScore !== null && event.intAwayScore !== null;
+  const hasScore = event.intHomeScore !== null && event.intAwayScore !== null;
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={handlePress}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.7}>
       <View style={styles.dateBadge}>
         <Feather
           name={isUpcoming ? 'calendar' : 'clock'}
           size={14}
           color={isUpcoming ? theme.colors.primary : theme.colors.textSecondary}
         />
-        <Text
-          style={[
-            styles.dateText,
-            isUpcoming && styles.upcomingDate,
-          ]}
-        >
+        <Text style={[styles.dateText, isUpcoming && styles.upcomingDate]}>
           {formatDate(event.dateEvent)}
         </Text>
       </View>

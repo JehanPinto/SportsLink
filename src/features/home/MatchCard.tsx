@@ -1,20 +1,10 @@
 // src/features/home/MatchCard.tsx
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import {
-  toggleTeamFavourite,
-  selectFavouriteTeams,
-} from '../favourites/favouritesSlice';
+import { toggleTeamFavourite, selectFavouriteTeams } from '../favourites/favouritesSlice';
 import { useTheme } from '../../context/ThemeContext';
 
 interface Team {
@@ -60,17 +50,9 @@ export default function MatchCard({ team, onPress }: MatchCardProps) {
   const badgeUrl = team.strBadge || team.strTeamBadge;
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={onPress}
-      activeOpacity={0.9}
-    >
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
       <LinearGradient
-        colors={
-          isDark
-            ? [theme.colors.surface, theme.colors.background]
-            : ['#ffffff', '#f8f9fa']
-        }
+        colors={isDark ? [theme.colors.surface, theme.colors.background] : ['#ffffff', '#f8f9fa']}
         style={styles.gradient}
       />
 
@@ -90,11 +72,7 @@ export default function MatchCard({ team, onPress }: MatchCardProps) {
 
       <View style={styles.imageContainer}>
         {badgeUrl ? (
-          <Image
-            source={{ uri: badgeUrl }}
-            style={styles.image}
-            resizeMode="contain"
-          />
+          <Image source={{ uri: badgeUrl }} style={styles.image} resizeMode="contain" />
         ) : (
           <View style={styles.placeholderImage}>
             <Feather name="shield" size={48} color={theme.colors.disabled} />

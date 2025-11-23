@@ -13,29 +13,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { logout } from '../auth/authSlice';
-import { toggleTheme, selectTheme, selectIsDarkMode } from '../ui/uiSlice';
+import { toggleTheme,  selectIsDarkMode } from '../ui/uiSlice';
 import { useTheme } from '../../context/ThemeContext';
 
 export default function ProfileScreen() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const currentTheme = useAppSelector(selectTheme);
+  
   const isDarkMode = useAppSelector(selectIsDarkMode);
   const { theme } = useTheme();
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => dispatch(logout()),
-        },
-      ]
-    );
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: () => dispatch(logout()),
+      },
+    ]);
   };
 
   const handleToggleTheme = () => {
@@ -55,16 +51,13 @@ export default function ProfileScreen() {
         {/* User Info Card */}
         <View style={styles.profileCard}>
           {user?.image ? (
-            <Image 
-              source={{ uri: user.image }} 
-              style={styles.avatar}
-            />
+            <Image source={{ uri: user.image }} style={styles.avatar} />
           ) : (
             <View style={styles.avatarPlaceholder}>
               <Feather name="user" size={40} color={theme.colors.primary} />
             </View>
           )}
-          
+
           <Text style={styles.userName}>
             {user?.firstName} {user?.lastName}
           </Text>
@@ -79,18 +72,21 @@ export default function ProfileScreen() {
           {/* Theme Toggle */}
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
-              <View style={[styles.iconContainer, { backgroundColor: isDarkMode ? '#8b9cff20' : '#667eea20' }]}>
-                <Feather 
-                  name={isDarkMode ? 'moon' : 'sun'} 
-                  size={20} 
-                  color={theme.colors.primary} 
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: isDarkMode ? '#8b9cff20' : '#667eea20' },
+                ]}
+              >
+                <Feather
+                  name={isDarkMode ? 'moon' : 'sun'}
+                  size={20}
+                  color={theme.colors.primary}
                 />
               </View>
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Dark Mode</Text>
-                <Text style={styles.settingDescription}>
-                  {isDarkMode ? 'Enabled' : 'Disabled'}
-                </Text>
+                <Text style={styles.settingDescription}>{isDarkMode ? 'Enabled' : 'Disabled'}</Text>
               </View>
             </View>
             <Switch
@@ -178,131 +174,132 @@ export default function ProfileScreen() {
   );
 }
 
-const createStyles = (theme: any, isDarkMode: boolean) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.text,
-  },
-  profileCard: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.card,
-    marginHorizontal: 20,
-    marginTop: 20,
-    padding: 24,
-    borderRadius: 16,
-    ...theme.shadows.medium,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-  },
-  avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: isDarkMode ? '#8b9cff20' : '#667eea20',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.text,
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
-    marginBottom: 4,
-  },
-  userUsername: {
-    fontSize: 14,
-    color: theme.colors.primary,
-    fontWeight: '600',
-  },
-  section: {
-    marginTop: 24,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: theme.colors.text,
-    marginBottom: 12,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: theme.colors.card,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    ...theme.shadows.small,
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text,
-  },
-  settingDescription: {
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-    marginTop: 2,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: theme.colors.card,
-    marginHorizontal: 20,
-    marginTop: 24,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#ff3b30',
-  },
-  logoutText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ff3b30',
-  },
-  version: {
-    textAlign: 'center',
-    color: theme.colors.textSecondary,
-    fontSize: 12,
-    marginTop: 24,
-  },
-});
+const createStyles = (theme: any, isDarkMode: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+    },
+    profileCard: {
+      alignItems: 'center',
+      backgroundColor: theme.colors.card,
+      marginHorizontal: 20,
+      marginTop: 20,
+      padding: 24,
+      borderRadius: 16,
+      ...theme.shadows.medium,
+    },
+    avatar: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      marginBottom: 16,
+    },
+    avatarPlaceholder: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor: isDarkMode ? '#8b9cff20' : '#667eea20',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    userName: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      marginBottom: 4,
+    },
+    userEmail: {
+      fontSize: 14,
+      color: theme.colors.textSecondary,
+      marginBottom: 4,
+    },
+    userUsername: {
+      fontSize: 14,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    section: {
+      marginTop: 24,
+      paddingHorizontal: 20,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      marginBottom: 12,
+    },
+    settingItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.card,
+      padding: 16,
+      borderRadius: 12,
+      marginBottom: 12,
+      ...theme.shadows.small,
+    },
+    settingLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    iconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    settingText: {
+      flex: 1,
+    },
+    settingLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.text,
+    },
+    settingDescription: {
+      fontSize: 12,
+      color: theme.colors.textSecondary,
+      marginTop: 2,
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      backgroundColor: theme.colors.card,
+      marginHorizontal: 20,
+      marginTop: 24,
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: '#ff3b30',
+    },
+    logoutText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#ff3b30',
+    },
+    version: {
+      textAlign: 'center',
+      color: theme.colors.textSecondary,
+      fontSize: 12,
+      marginTop: 24,
+    },
+  });

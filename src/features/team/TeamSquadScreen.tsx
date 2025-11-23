@@ -28,32 +28,35 @@ export default function TeamSquadScreen() {
 
   const renderPlayer = ({ item }: { item: any }) => (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+      style={[
+        styles.card,
+        { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+      ]}
       onPress={() => navigation.navigate('PlayerDetails', { playerId: item.idPlayer })}
       activeOpacity={0.8}
     >
       {item.strThumb ? (
-        <Image 
-          source={{ uri: item.strThumb }} 
-          style={styles.playerImage}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: item.strThumb }} style={styles.playerImage} resizeMode="cover" />
       ) : (
         <View style={[styles.placeholderImage, { backgroundColor: theme.colors.surface }]}>
           <Feather name="user" size={40} color={theme.colors.disabled} />
         </View>
       )}
-      
+
       <View style={styles.playerInfo}>
         <Text style={[styles.playerName, { color: theme.colors.text }]} numberOfLines={1}>
           {item.strPlayer}
         </Text>
         {item.strPosition && (
-          <Text style={[styles.playerPosition, { color: theme.colors.textSecondary }]}>{item.strPosition}</Text>
+          <Text style={[styles.playerPosition, { color: theme.colors.textSecondary }]}>
+            {item.strPosition}
+          </Text>
         )}
         {item.strNumber && (
           <View style={[styles.numberBadge, { backgroundColor: `${theme.colors.primary}20` }]}>
-            <Text style={[styles.numberText, { color: theme.colors.primary }]}>#{item.strNumber}</Text>
+            <Text style={[styles.numberText, { color: theme.colors.primary }]}>
+              #{item.strNumber}
+            </Text>
           </View>
         )}
       </View>
@@ -64,7 +67,10 @@ export default function TeamSquadScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        edges={['top']}
+      >
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
@@ -73,10 +79,18 @@ export default function TeamSquadScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['top']}
+    >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity 
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border },
+        ]}
+      >
+        <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
           activeOpacity={0.7}
@@ -96,7 +110,9 @@ export default function TeamSquadScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Feather name="users" size={50} color={theme.colors.disabled} />
-            <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>No players found</Text>
+            <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+              No players found
+            </Text>
           </View>
         }
       />

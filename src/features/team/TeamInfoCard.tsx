@@ -38,9 +38,7 @@ export default function TeamInfoCard({ team }: TeamInfoCardProps) {
     {
       icon: 'users',
       label: 'Capacity',
-      value: team.intStadiumCapacity
-        ? Number(team.intStadiumCapacity).toLocaleString()
-        : null,
+      value: team.intStadiumCapacity ? Number(team.intStadiumCapacity).toLocaleString() : null,
     },
     {
       icon: 'calendar',

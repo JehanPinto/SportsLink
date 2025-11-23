@@ -4,6 +4,13 @@
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json}\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -11,7 +18,6 @@
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@hookform/resolvers": "^5.2.2",
-    "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^7.8.6",
     "@react-navigation/material-top-tabs": "^7.4.3",
     "@react-navigation/native": "^7.1.21",
@@ -34,7 +40,27 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "babel-jest": "^30.2.0",
+    "babel-preset-expo": "^54.0.7",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-native": "^5.0.0",
+    "expo-asset": "^12.0.10",
+    "expo-font": "^14.0.9",
+    "jest": "^30.2.0",
+    "jest-circus": "^30.2.0",
+    "jest-expo": "^54.0.13",
+    "prettier": "^3.6.2",
+    "react-test-renderer": "^19.1.0",
     "typescript": "~5.9.2"
   },
   "private": true

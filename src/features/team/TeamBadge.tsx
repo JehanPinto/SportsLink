@@ -7,7 +7,7 @@ interface TeamBadgeProps {
   teamName: string;
 }
 
-export default function TeamBadge({ badgeUrl, teamName }: TeamBadgeProps) {
+export default function TeamBadge({ badgeUrl }: TeamBadgeProps) {
   const [imageError, setImageError] = useState(false);
 
   if (!badgeUrl || imageError) {

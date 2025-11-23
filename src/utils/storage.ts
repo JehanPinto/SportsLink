@@ -9,7 +9,7 @@ const isSecureStoreAvailable = async (): Promise<boolean> => {
   if (Platform.OS === 'web') {
     return false;
   }
-  
+
   try {
     await SecureStore.isAvailableAsync();
     return true;
@@ -24,9 +24,9 @@ const isSecureStoreAvailable = async (): Promise<boolean> => {
 export const saveToken = async (key: string, value: string): Promise<void> => {
   try {
     const stringValue = typeof value === 'string' ? value : String(value);
-    
+
     const useSecureStore = await isSecureStoreAvailable();
-    
+
     if (useSecureStore) {
       await SecureStore.setItemAsync(key, stringValue);
     } else {
@@ -45,7 +45,7 @@ export const saveToken = async (key: string, value: string): Promise<void> => {
 export const getToken = async (key: string): Promise<string | null> => {
   try {
     const useSecureStore = await isSecureStoreAvailable();
-    
+
     if (useSecureStore) {
       return await SecureStore.getItemAsync(key);
     } else {
@@ -63,7 +63,7 @@ export const getToken = async (key: string): Promise<string | null> => {
 export const deleteToken = async (key: string): Promise<void> => {
   try {
     const useSecureStore = await isSecureStoreAvailable();
-    
+
     if (useSecureStore) {
       await SecureStore.deleteItemAsync(key);
     } else {

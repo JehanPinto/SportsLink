@@ -10,12 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  useRoute,
-  useNavigation,
-  RouteProp,
-  NavigationProp,
-} from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp, NavigationProp } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { RootStackParamList } from '../../navigation/types';
 import { useLookupEventQuery } from '../../api/sportsApi';
@@ -49,10 +44,7 @@ export default function MatchDetailsScreen() {
         <View style={styles.centered}>
           <Feather name="alert-circle" size={50} color={theme.colors.error} />
           <Text style={styles.errorText}>Failed to load match details</Text>
-          <TouchableOpacity
-            style={styles.retryButton}
-            onPress={() => navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.retryButton} onPress={() => navigation.goBack()}>
             <Text style={styles.retryText}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -70,23 +62,15 @@ export default function MatchDetailsScreen() {
     });
   };
 
-  const hasScore =
-    event.intHomeScore !== null && event.intAwayScore !== null;
+  const hasScore = event.intHomeScore !== null && event.intAwayScore !== null;
   const isFinished = event.strStatus === 'Match Finished';
   const isPending = event.strStatus === 'Not Started';
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <Feather
-            name="arrow-left"
-            size={24}
-            color={theme.colors.text}
-          />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Feather name="arrow-left" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Match Details</Text>
         <View style={{ width: 40 }} />
@@ -121,23 +105,15 @@ export default function MatchDetailsScreen() {
         </View>
 
         <View style={styles.infoContainer}>
-          <View style={styles.infoRow}>
-            <Feather
-              name="calendar"
-              size={16}
-              color={theme.colors.primary}
-            />
-            <Text style={styles.infoText}>
-              {formatDate(event.dateEvent)}
-            </Text>
-          </View>
+          {event.dateEvent && (
+            <View style={styles.infoRow}>
+              <Feather name="calendar" size={16} color={theme.colors.primary} />
+              <Text style={styles.infoText}>{formatDate(event.dateEvent)}</Text>
+            </View>
+          )}
           {event.strVenue && (
             <View style={styles.infoRow}>
-              <Feather
-                name="map-pin"
-                size={16}
-                color={theme.colors.primary}
-              />
+              <Feather name="map-pin" size={16} color={theme.colors.primary} />
               <Text style={styles.infoText}>{event.strVenue}</Text>
             </View>
           )}
@@ -182,26 +158,18 @@ export default function MatchDetailsScreen() {
         {(event.strHomeGoalDetails || event.strAwayGoalDetails) && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather
-                name="target"
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Feather name="target" size={20} color={theme.colors.primary} />
             </View>
             {event.strHomeGoalDetails && (
               <View style={styles.goalCard}>
                 <Text style={styles.goalTeam}>{event.strHomeTeam}</Text>
-                <Text style={styles.goalDetails}>
-                  {event.strHomeGoalDetails}
-                </Text>
+                <Text style={styles.goalDetails}>{event.strHomeGoalDetails}</Text>
               </View>
             )}
             {event.strAwayGoalDetails && (
               <View style={styles.goalCard}>
                 <Text style={styles.goalTeam}>{event.strAwayTeam}</Text>
-                <Text style={styles.goalDetails}>
-                  {event.strAwayGoalDetails}
-                </Text>
+                <Text style={styles.goalDetails}>{event.strAwayGoalDetails}</Text>
               </View>
             )}
           </View>
@@ -210,74 +178,42 @@ export default function MatchDetailsScreen() {
         {(event.strHomeLineupGoalkeeper || event.strAwayLineupGoalkeeper) && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather
-                name="users"
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Feather name="users" size={20} color={theme.colors.primary} />
               <Text style={styles.sectionTitle}>Lineups</Text>
             </View>
 
             <View style={styles.lineupsContainer}>
               <View style={styles.lineupColumn}>
-                <Text style={styles.lineupTeamName}>
-                  {event.strHomeTeam}
-                </Text>
+                <Text style={styles.lineupTeamName}>{event.strHomeTeam}</Text>
                 {event.strHomeLineupGoalkeeper && (
-                  <LineupSection
-                    title="Goalkeeper"
-                    players={event.strHomeLineupGoalkeeper}
-                  />
+                  <LineupSection title="Goalkeeper" players={event.strHomeLineupGoalkeeper} />
                 )}
                 {event.strHomeLineupDefense && (
-                  <LineupSection
-                    title="Defense"
-                    players={event.strHomeLineupDefense}
-                  />
+                  <LineupSection title="Defense" players={event.strHomeLineupDefense} />
                 )}
                 {event.strHomeLineupMidfield && (
-                  <LineupSection
-                    title="Midfield"
-                    players={event.strHomeLineupMidfield}
-                  />
+                  <LineupSection title="Midfield" players={event.strHomeLineupMidfield} />
                 )}
                 {event.strHomeLineupForward && (
-                  <LineupSection
-                    title="Forward"
-                    players={event.strHomeLineupForward}
-                  />
+                  <LineupSection title="Forward" players={event.strHomeLineupForward} />
                 )}
               </View>
 
               <View style={styles.lineupDivider} />
 
               <View style={styles.lineupColumn}>
-                <Text style={styles.lineupTeamName}>
-                  {event.strAwayTeam}
-                </Text>
+                <Text style={styles.lineupTeamName}>{event.strAwayTeam}</Text>
                 {event.strAwayLineupGoalkeeper && (
-                  <LineupSection
-                    title="Goalkeeper"
-                    players={event.strAwayLineupGoalkeeper}
-                  />
+                  <LineupSection title="Goalkeeper" players={event.strAwayLineupGoalkeeper} />
                 )}
                 {event.strAwayLineupDefense && (
-                  <LineupSection
-                    title="Defense"
-                    players={event.strAwayLineupDefense}
-                  />
+                  <LineupSection title="Defense" players={event.strAwayLineupDefense} />
                 )}
                 {event.strAwayLineupMidfield && (
-                  <LineupSection
-                    title="Midfield"
-                    players={event.strAwayLineupMidfield}
-                  />
+                  <LineupSection title="Midfield" players={event.strAwayLineupMidfield} />
                 )}
                 {event.strAwayLineupForward && (
-                  <LineupSection
-                    title="Forward"
-                    players={event.strAwayLineupForward}
-                  />
+                  <LineupSection title="Forward" players={event.strAwayLineupForward} />
                 )}
               </View>
             </View>
@@ -287,22 +223,14 @@ export default function MatchDetailsScreen() {
         {event.strLeague && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Feather
-                name="info"
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Feather name="info" size={20} color={theme.colors.primary} />
               <Text style={styles.sectionTitle}>Match Info</Text>
             </View>
 
             <View style={styles.infoCard}>
               <InfoRow label="League" value={event.strLeague} />
-              {event.strSeason && (
-                <InfoRow label="Season" value={event.strSeason} />
-              )}
-              {event.intRound && (
-                <InfoRow label="Round" value={event.intRound} />
-              )}
+              {event.strSeason && <InfoRow label="Season" value={event.strSeason} />}
+              {event.intRound && <InfoRow label="Round" value={event.intRound} />}
             </View>
           </View>
         )}
@@ -313,14 +241,8 @@ export default function MatchDetailsScreen() {
   );
 }
 
-function LineupSection({
-  title,
-  players,
-}: {
-  title: string;
-  players: string;
-}) {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+function LineupSection({ title, players }: { title: string; players: string }) {
+ 
   const { theme, isDark } = useTheme();
   const styles = createStyles(theme, isDark);
   const playerList = players
@@ -348,7 +270,7 @@ function LineupSection({
 function InfoRow({ label, value }: { label: string; value: string }) {
   const { theme } = useTheme();
   const styles = createStyles(theme, theme.isDark);
-  
+
   return (
     <View style={styles.infoCardRow}>
       <Text style={styles.infoLabel}>{label}</Text>

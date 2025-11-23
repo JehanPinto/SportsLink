@@ -14,10 +14,7 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import {
-  selectFavouriteTeams,
-  clearTeamFavourites,
-} from './favouritesSlice';
+import { selectFavouriteTeams, clearTeamFavourites } from './favouritesSlice';
 import { useListLeagueTeamsQuery } from '../../api/sportsApi';
 import MatchCard from '../home/MatchCard';
 import { useTheme } from '../../context/ThemeContext';
@@ -33,8 +30,7 @@ export default function FavouritesScreen() {
 
   const { data: allTeams, isLoading } = useListLeagueTeamsQuery(DEFAULT_LEAGUE);
 
-  const favouriteTeams =
-    allTeams?.filter((team) => favouriteTeamIds.includes(team.idTeam)) || [];
+  const favouriteTeams = allTeams?.filter((team) => favouriteTeamIds.includes(team.idTeam)) || [];
 
   const handleClearAll = () => {
     if (favouriteTeamIds.length > 0) {
@@ -81,10 +77,7 @@ export default function FavouritesScreen() {
             <Text style={styles.title}>My Favourites</Text>
           </View>
           {favouriteTeamIds.length > 0 && (
-            <TouchableOpacity
-              onPress={handleClearAll}
-              style={styles.clearButton}
-            >
+            <TouchableOpacity onPress={handleClearAll} style={styles.clearButton}>
               <Feather name="trash-2" size={20} color={theme.colors.error} />
               <Text style={styles.clearText}>Clear All</Text>
             </TouchableOpacity>
@@ -94,9 +87,7 @@ export default function FavouritesScreen() {
         <View style={styles.statsContainer}>
           <View style={styles.statBadge}>
             <Text style={styles.statNumber}>{favouriteTeamIds.length}</Text>
-            <Text style={styles.statLabel}>
-              {favouriteTeamIds.length === 1 ? 'Team' : 'Teams'}
-            </Text>
+            <Text style={styles.statLabel}>{favouriteTeamIds.length === 1 ? 'Team' : 'Teams'}</Text>
           </View>
         </View>
       </SafeAreaView>
@@ -110,10 +101,7 @@ export default function FavouritesScreen() {
           <Text style={styles.emptyDescription}>
             Start adding teams to your favourites by tapping the heart icon
           </Text>
-          <TouchableOpacity
-            style={styles.browseButton}
-            onPress={handleBrowseTeams}
-          >
+          <TouchableOpacity style={styles.browseButton} onPress={handleBrowseTeams}>
             <Feather name="search" size={20} color="#fff" />
             <Text style={styles.browseButtonText}>Browse Teams</Text>
           </TouchableOpacity>
@@ -122,9 +110,7 @@ export default function FavouritesScreen() {
         <FlatList
           data={favouriteTeams}
           keyExtractor={(item) => item.idTeam}
-          renderItem={({ item }) => (
-            <MatchCard team={item} onPress={() => handleTeamPress(item)} />
-          )}
+          renderItem={({ item }) => <MatchCard team={item} onPress={() => handleTeamPress(item)} />}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />

@@ -19,24 +19,19 @@ export default function TeamAbout({ description }: TeamAboutProps) {
   return (
     <View style={styles.descriptionSection}>
       <Text style={styles.sectionTitle}>About</Text>
-      <Text
-        numberOfLines={expanded ? undefined : 4}
-        style={styles.description}
-      >
+      <Text numberOfLines={expanded ? undefined : 4} style={styles.description}>
         {description}
       </Text>
       {isLongDescription && (
         <Pressable onPress={() => setExpanded(!expanded)}>
-          <Text style={styles.readMore}>
-            {expanded ? 'Show less' : 'Read more'}
-          </Text>
+          <Text style={styles.readMore}>{expanded ? 'Show less' : 'Read more'}</Text>
         </Pressable>
       )}
     </View>
   );
 }
 
-const createStyles = (theme: any, isDark: boolean) =>
+const createStyles = (theme: any) =>
   StyleSheet.create({
     descriptionSection: {
       padding: 16,

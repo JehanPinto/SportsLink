@@ -38,15 +38,12 @@ export default function TeamHeader({ team }: TeamHeaderProps) {
 
   return (
     <View style={styles.header}>
-      <TouchableOpacity 
-        onPress={() => navigation.goBack()}
-        style={styles.button}
-      >
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.button}>
         <Feather name="arrow-left" size={24} color={theme.colors.text} />
       </TouchableOpacity>
-      
+
       <Text style={styles.headerTitle}>Team Details</Text>
-      
+
       <View style={styles.actions}>
         <TouchableOpacity onPress={handleShare} style={styles.button}>
           <Feather name="share-2" size={22} color={theme.colors.text} />
