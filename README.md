@@ -268,9 +268,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourname)
-- Portfolio: [yourportfolio.com](https://yourportfolio.com)
+- GitHub: [@JehanPinto](https://github.com/JehanPinto)
+- LinkedIn: [JehanPinto](https://www.linkedin.com/in/jehan-pinto-026bb9302/)
+
 
 ---
 
@@ -283,11 +283,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Support
 
-For support, email your.email@example.com or open an issue on GitHub.
-
----
 
 <div align="center">
   <p>Made with ❤️ and React Native</p>
