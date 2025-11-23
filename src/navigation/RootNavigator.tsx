@@ -5,10 +5,10 @@ import { selectIsAuthenticated } from '../features/auth/authSlice';
 import LoginScreen from '../features/auth/LoginScreen';
 import RegisterScreen from '../features/auth/RegisterScreen';
 import TabNavigator from './TabNavigator';
-import TeamDetailScreen from '../features/team/teamDetailScreen';
+import TeamDetailScreen from '../features/team/TeamDetailScreen';
 import { RootStackParamList } from './types';
 import MatchDetailsScreen from '../features/matches/MatchDetailsScreen';
-import PlayerDetailsScreen from '../features/players/PlayerDetailsScreen.tsx';
+import PlayerDetailsScreen from '../features/players/PlayerDetailsScreen';
 import TeamSquadScreen from '../features/team/TeamSquadScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

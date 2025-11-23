@@ -1,4 +1,3 @@
-// src/features/auth/LoginScreen.tsx
 import React from 'react';
 import {
   View,
@@ -13,11 +12,13 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useLoginMutation } from '../../api/authApi';
 import { useAppDispatch } from '../../hooks';
 import { setCredentials } from './authSlice';
 import { useTheme } from '../../context/ThemeContext';
+import { loginLocalUser } from '../../utils/localAuthStorage';
+import { RootStackParamList } from '../../navigation/types';
 
 const loginSchema = yup.object().shape({
   username: yup
@@ -36,11 +37,13 @@ interface LoginFormData {
 }
 
 export default function LoginScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useAppDispatch();
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading: isApiLoading }] = useLoginMutation();
   const { theme, isDark } = useTheme();
-  const styles = createStyles(theme, isDark);
+  const [isLocalLoading, setIsLocalLoading] = React.useState(false);
+  
+  const isLoading = isApiLoading || isLocalLoading;
 
   const {
     control,
@@ -55,13 +58,37 @@ export default function LoginScreen() {
     },
   });
 
-  const fillTestCredentials = () => {
-    setValue('username', 'emilys');
-    setValue('password', 'emilyspass');
-  };
+  
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      setIsLocalLoading(true);
+      
+      // Step 1: Try local user first
+      const localUser = await loginLocalUser(data.username, data.password);
+      
+      if (localUser) {
+        // Login successful with local user
+        dispatch(
+          setCredentials({
+            user: {
+              id: parseInt(localUser.id, 10),
+              username: localUser.username,
+              email: localUser.email,
+              firstName: localUser.firstName,
+              lastName: localUser.lastName,
+              gender: localUser.gender || '',
+              image: localUser.image || '',
+            },
+            token: `local_${localUser.id}`, // Generate a local token
+          })
+        );
+        setIsLocalLoading(false);
+        return;
+      }
+
+      // Step 2: If no local user, try API (for test users)
+      setIsLocalLoading(false);
       const result = await login(data).unwrap();
 
       dispatch(
@@ -76,15 +103,19 @@ export default function LoginScreen() {
             image: result.image,
           },
           token: result.accessToken,
-        }),
+        })
       );
     } catch (error: any) {
+      setIsLocalLoading(false);
       Alert.alert(
         'Login Failed',
-        error?.data?.message || 'Invalid credentials. Please try again.',
+        'Invalid credentials. Please check your username and password.',
+        [{ text: 'OK' }]
       );
     }
   };
+
+  const styles = createStyles(theme, isDark);
 
   return (
     <View style={styles.container}>
@@ -118,7 +149,7 @@ export default function LoginScreen() {
         <Controller
           control={control}
           name="password"
-          render={({ field: { onChange, onBlur, value} }) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <View style={styles.inputContainer}>
               <TextInput
                 style={[styles.input, errors.password && styles.inputError]}
@@ -149,23 +180,18 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={fillTestCredentials}
-          style={[styles.linkButton, { marginTop: 8 }]}
-        >
-          <Text style={styles.linkText}>Fill Test Credentials</Text>
-        </TouchableOpacity>
+       
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('Register' as never)}
+          onPress={() => navigation.navigate('Register')}
           style={styles.linkButton}
         >
           <Text style={styles.linkText}>
-            Don't have an account? Register
+            Don't have an account? <Text style={styles.linkTextBold}>Register</Text>
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.hint}>Test: emilys / emilyspass</Text>
+        <Text style={styles.hint}>Test API user: emilys / emilyspass</Text>
       </View>
     </View>
   );
@@ -201,8 +227,8 @@ const createStyles = (theme: any, isDark: boolean) =>
     input: {
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: 8,
-      padding: 12,
+      borderRadius: 12,
+      padding: 14,
       fontSize: 16,
       backgroundColor: theme.colors.surface,
       color: theme.colors.text,
@@ -219,7 +245,7 @@ const createStyles = (theme: any, isDark: boolean) =>
     button: {
       backgroundColor: theme.colors.primary,
       padding: 16,
-      borderRadius: 8,
+      borderRadius: 12,
       alignItems: 'center',
       marginTop: 8,
     },
@@ -236,8 +262,12 @@ const createStyles = (theme: any, isDark: boolean) =>
       alignItems: 'center',
     },
     linkText: {
-      color: theme.colors.primary,
+      color: theme.colors.textSecondary,
       fontSize: 14,
+    },
+    linkTextBold: {
+      color: theme.colors.primary,
+      fontWeight: '600',
     },
     hint: {
       marginTop: 24,
