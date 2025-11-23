@@ -1,35 +1,46 @@
+
 import React from 'react';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
-import { Platform } from 'react-native';
 import HomeScreen from '../features/home/HomeScreen';
 import FavouritesScreen from '../features/favourites/FavouritesScreen';
+import ProfileScreen from '../features/profile/ProfileScreen';
 import { useAppSelector } from '../hooks';
 import { selectFavouriteTeams } from '../features/favourites/favouritesSlice';
-import ProfileScreen from '../features/profile/ProfileScreen';
+import { useTheme } from '../context/ThemeContext';
 
-const Tab = createBottomTabNavigator();
+type TabParamList = {
+  HomeTab: undefined;
+  FavouritesTab: undefined;
+  ProfileTab: undefined;
+};
+
+const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function TabNavigator() {
   const favouriteTeams = useAppSelector(selectFavouriteTeams);
+  const { theme, isDark } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#667eea',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
         tabBarStyle: {
           height: Platform.OS === 'ios' ? 85 : 60,
           paddingBottom: Platform.OS === 'ios' ? 25 : 8,
           paddingTop: 8,
           borderTopWidth: 1,
-          borderTopColor: '#f0f0f0',
-          backgroundColor: '#fff',
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
+          borderTopColor: isDark ? theme.colors.border : '#f0f0f0',
+          backgroundColor: theme.colors.surface,
+          // add subtle shadow for elevation on Android
+          elevation: isDark ? 8 : 2,
         },
       }}
     >
@@ -37,20 +48,22 @@ export default function TabNavigator() {
         name="HomeTab"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: '',
           tabBarIcon: ({ color, size }) => (
             <Feather name="home" size={size} color={color} />
           ),
         }}
       />
+
       <Tab.Screen
         name="FavouritesTab"
         component={FavouritesScreen}
         options={{
-          tabBarLabel: 'Favourites',
-          tabBarBadge: favouriteTeams.length > 0 ? favouriteTeams.length : undefined,
+          tabBarLabel: '',
+          tabBarBadge:
+            favouriteTeams.length > 0 ? favouriteTeams.length : undefined,
           tabBarBadgeStyle: {
-            backgroundColor: '#ff3b30',
+            backgroundColor: theme.colors.error,
             color: '#fff',
             fontSize: 10,
             fontWeight: 'bold',
@@ -60,11 +73,12 @@ export default function TabNavigator() {
           ),
         }}
       />
+
       <Tab.Screen
         name="ProfileTab"
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'Profile',
+          tabBarLabel: '',
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),

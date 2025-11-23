@@ -1,3 +1,4 @@
+// src/features/team/TeamSquadScreen.tsx
 import React from 'react';
 import {
   View,
@@ -13,6 +14,7 @@ import { useRoute, useNavigation, RouteProp, NavigationProp } from '@react-navig
 import { Feather } from '@expo/vector-icons';
 import { RootStackParamList } from '../../navigation/types';
 import { useSearchPlayersQuery } from '../../api/sportsApi';
+import { useTheme } from '../../context/ThemeContext';
 
 type TeamSquadScreenRouteProp = RouteProp<RootStackParamList, 'TeamSquad'>;
 
@@ -20,13 +22,15 @@ export default function TeamSquadScreen() {
   const route = useRoute<TeamSquadScreenRouteProp>();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { teamName } = route.params;
+  const { theme } = useTheme();
 
   const { data: players, isLoading } = useSearchPlayersQuery(teamName);
 
   const renderPlayer = ({ item }: { item: any }) => (
     <TouchableOpacity
-      style={styles.playerCard}
+      style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
       onPress={() => navigation.navigate('PlayerDetails', { playerId: item.idPlayer })}
+      activeOpacity={0.8}
     >
       {item.strThumb ? (
         <Image 
@@ -35,50 +39,51 @@ export default function TeamSquadScreen() {
           resizeMode="cover"
         />
       ) : (
-        <View style={styles.placeholderImage}>
-          <Feather name="user" size={40} color="#ddd" />
+        <View style={[styles.placeholderImage, { backgroundColor: theme.colors.surface }]}>
+          <Feather name="user" size={40} color={theme.colors.disabled} />
         </View>
       )}
       
       <View style={styles.playerInfo}>
-        <Text style={styles.playerName} numberOfLines={1}>
+        <Text style={[styles.playerName, { color: theme.colors.text }]} numberOfLines={1}>
           {item.strPlayer}
         </Text>
         {item.strPosition && (
-          <Text style={styles.playerPosition}>{item.strPosition}</Text>
+          <Text style={[styles.playerPosition, { color: theme.colors.textSecondary }]}>{item.strPosition}</Text>
         )}
         {item.strNumber && (
-          <View style={styles.numberBadge}>
-            <Text style={styles.numberText}>#{item.strNumber}</Text>
+          <View style={[styles.numberBadge, { backgroundColor: `${theme.colors.primary}20` }]}>
+            <Text style={[styles.numberText, { color: theme.colors.primary }]}>#{item.strNumber}</Text>
           </View>
         )}
       </View>
 
-      <Feather name="chevron-right" size={20} color="#999" />
+      <Feather name="chevron-right" size={20} color={theme.colors.textSecondary} />
     </TouchableOpacity>
   );
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#667eea" />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity 
           onPress={() => navigation.goBack()}
           style={styles.backButton}
+          activeOpacity={0.7}
         >
-          <Feather name="arrow-left" size={24} color="#333" />
+          <Feather name="arrow-left" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{teamName} Squad</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{teamName} Squad</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -90,8 +95,8 @@ export default function TeamSquadScreen() {
         contentContainerStyle={styles.list}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Feather name="users" size={50} color="#ddd" />
-            <Text style={styles.emptyText}>No players found</Text>
+            <Feather name="users" size={50} color={theme.colors.disabled} />
+            <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>No players found</Text>
           </View>
         }
       />
@@ -102,7 +107,6 @@ export default function TeamSquadScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
   },
   centered: {
     flex: 1,
@@ -114,10 +118,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   backButton: {
     width: 40,
@@ -126,24 +128,23 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
   },
   list: {
-    padding: 20,
+    padding: 16,
   },
-  playerCard: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 12,
     marginBottom: 12,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   playerImage: {
     width: 60,
@@ -155,7 +156,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -165,17 +165,14 @@ const styles = StyleSheet.create({
   },
   playerName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
     marginBottom: 4,
   },
   playerPosition: {
     fontSize: 13,
-    color: '#666',
     marginBottom: 4,
   },
   numberBadge: {
-    backgroundColor: '#f0f4ff',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -183,8 +180,7 @@ const styles = StyleSheet.create({
   },
   numberText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#667eea',
+    fontWeight: '700',
   },
   emptyContainer: {
     alignItems: 'center',
@@ -194,6 +190,5 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#999',
   },
 });
